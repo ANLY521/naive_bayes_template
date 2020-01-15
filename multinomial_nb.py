@@ -1,29 +1,14 @@
 #!/usr/bin/env python
 import argparse
-
-def load_function_words(resource_path):
-    """load a newline separated text file of function words.
-    Return a list"""
-    f_words = []
-    with open(resource_path, 'r') as f:
-        for line in f:
-            if line.strip():
-                f_words.append(line.lower().strip())
-    return f_words
+from util import load_function_words, parse_imdb
 
 
 def main(data_file, vocab_path):
-    """Build an authorship attribution classifier using MultinomialNaiveBayes for two authors"""
+    """Build and evaluate an authorship attribution classifier using MultinomialNaiveBayes for two authors"""
 
     function_words = load_function_words(vocab_path)
 
-    reviews = []
-    authors = []
-    with open(data_file, 'r') as data_file:
-        for line in data_file:
-            fields = line.strip().split("\t")
-            reviews.append(fields[-1])
-            authors.append(fields[0])
+    reviews, authors = parse_imdb(data_file)
 
 
 

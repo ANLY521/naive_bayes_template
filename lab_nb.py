@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import argparse
 from collections import defaultdict
+from util import parse_imdb
 
 
 def word_probs(list_of_reviews, feature_list):
