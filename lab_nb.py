@@ -1,58 +1,82 @@
 #!/usr/bin/env python
 import argparse
-from collections import defaultdict
-from util import parse_imdb
+from util import parse_federalist_papers
 
 
-def word_probs(list_of_reviews, feature_list):
+def word_probabilities(list_of_reviews, feature_list):
     """calculates probabilities of each feature given this dataset using Laplace smoothing
     returns a dict {feature_1: probability_1, ... feature_n: probability_n}"""
-    return {}
+    all_review_tokens = []
+    for review in list_of_reviews:
+        all_review_tokens.extend(review.strip().lower().split())
+    author_counts = {}
+    for feature in feature_list:
+        count = len([t for t in all_review_tokens if t == feature])
+        author_counts[feature] = count + 1 # add smoothing
+    total_count = sum(author_counts.values())
+    author_probs = {f: (count / total_count) for f, count in author_counts.items()}
+    return author_probs
 
 
 def score(review, author_prob, feature_probs):
     """Calculates a naive bayes score for a string, given class estimate and feature estimates"""
     tokenized_review = review.strip().lower().split()
-    p = 0
+    p = author_prob
+    for feature, prob in feature_probs.items():
+        feature_count = len([w for w in tokenized_review if w == feature])
+        for i in range(feature_count):
+            p = p * prob
     return p
 
-def main(data_file, authors, features):
+def main(data_file, features):
     """extract function word features from a text file"""
 
-    # set up: create a dictionary from author -> list of reviews for two authors we will model
-    two_author_reviews = defaultdict(list)
+    # TODO: create a dictionary from author -> list of essays for two authors we will model
+    authors, essays, essay_ids = parse_federalist_papers(data_file)
+    essay_dict = {"HAMILTON":[], "MADISON":[]}
+    for author, essay in zip(authors, essays):
+        if author in essay_dict:
+            essay_dict[author].append(essay)
 
-    with open(data_file, 'r') as df:
-        for line in df:
-            fields = line.strip().split("\t")
-            author = fields[1]
-            if author in authors:
-                two_author_reviews[author].append(fields[-1])
+    total_essays = sum([len(essay_list) for essay_list in essay_dict.values()])
 
     # hold out one review per author to test the model
-    training_reviews = {author: reviews[:-1] for author, reviews in two_author_reviews.items()}
-    heldout_reviews = {author: reviews[-1] for author, reviews in two_author_reviews.items()}
+    training_essays = {author: essays[:-1] for author, essays in essay_dict.items()}
+    heldout_essays = {author: essays[-1] for author, essays in essay_dict.items()}
 
-    # estimate author probabilities. Creates a dict {author_1: probability_1, ...}
+    # TODO estimate author probabilities. Creates a dict {author_1: probability_1, ...}
     author_probs = {}
+    for author in essay_dict:
+        author_probs[author] = len(essay_dict[author]) / total_essays
+    print(f"Author prior: {author_probs}")
 
-    author_word_probs = {author: word_probs(reviews, features) for author, reviews in training_reviews.items()}
+    author_word_probs = {}
+    for author in essay_dict:
+        word_probs = word_probabilities(essay_dict[author], features)
+        author_word_probs[author] = word_probs
     print(author_word_probs)
 
-    # print(score(heldout_reviews['2093818'], author_probs['2093818'], author_word_probs['2093818']))
-    # print(score(heldout_reviews['2093818'], author_probs['7743887'], author_word_probs['7743887']))
-    # print()
-    # print(score(heldout_reviews['7743887'], author_probs['2093818'], author_word_probs['2093818']))
-    # print(score(heldout_reviews['7743887'], author_probs['7743887'], author_word_probs['7743887']))
+
+    for author in heldout_essays:
+        essay = heldout_essays[author]
+        essay_snippet = " ".join(essay[500:700].split()) # print a snippet
+        print(f"\nChecking heldout essay by {author}")
+        print(f"{essay_snippet}")
+
+        for testauthor in heldout_essays:
+            this_author_probability = author_probs[testauthor]
+            word_probs = author_word_probs[testauthor]
+            prob = score(essay, this_author_probability, word_probs)
+            print(f"model probability essay is from {testauthor}: {prob:0.02}")
+
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='artisinal naive bayes lab')
-    parser.add_argument('--path', type=str, default="imdb_practice.txt",
+    parser.add_argument('--path', type=str, default="federalist_dev.json",
                         help='path to author data')
 
     args = parser.parse_args()
-    authors = ['2093818', '7743887']
     features = ["in", "while", "until", "which", "how"]
 
-    main(args.path, authors, features)
+    main(args.path, features)
