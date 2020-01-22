@@ -31,7 +31,7 @@ def main(data_file, features):
     author_probs = {}
     print(f"Author prior: {author_probs}")
 
-    # TODO estimate word probabilities per author
+    # TODO estimate word probabilities per author. Define the function word_probabilities
     author_word_probs = {}
     print(author_word_probs)
 
@@ -45,6 +45,7 @@ def main(data_file, features):
         for testauthor in heldout_essays:
             this_author_probability = author_probs[testauthor]
             word_probs = author_word_probs[testauthor]
+            #TODO define the function score
             prob = score(essay, this_author_probability, word_probs)
             print(f"model probability essay is from {testauthor}: {prob:0.02}")
 
