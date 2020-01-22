@@ -17,13 +17,6 @@ def parse_federalist_papers(data_file):
     authors = []
     texts = []
     essay_ids = []
-    with open(data_file, 'r') as df:
-        data = json.load(df)
-    for item in data:
-        author, essay, text = item
-        authors.append(author)
-        texts.append(text)
-        essay_ids.append(essay)
     return authors, texts, essay_ids
 
 # TODO: write this function (lab)
@@ -34,16 +27,8 @@ def shuffle_dataset(data, id_strs):
     :param id_strs: iterable, each item an id
     :return: tuple (shuffled_data, shuffled_id_strs)
     """
-    new_order = np.random.permutation(len(id_strs))
-    # flexible to work with lists (i.e. of strings) or np
-    if isinstance(id_strs, np.ndarray):
-        shuffled_ids = id_strs[new_order]
-    else:
-        shuffled_ids = [id_strs[i] for i in new_order]
-    if isinstance(data, np.ndarray):
-        shuffled_data = data[new_order]
-    else:
-        shuffled_data = [data[i] for i in new_order]
+    shuffled_data = []
+    shuffled_ids = []
     return (shuffled_data, shuffled_ids)
 
 # TODO: write this function (lab1, homework)
@@ -58,11 +43,8 @@ def split_data(X, file_ids, test_percent = 0.3, shuffle=True):
     """
     if shuffle:
         X, file_ids = shuffle_dataset(X, file_ids)
-    data_size = len(X)
-    num_test = int(test_percent * data_size)
-
-    train = (X[:-num_test], file_ids[:-num_test])
-    test = (X[-num_test:], file_ids[-num_test:])
+    train = []
+    test = []
     return train, test
 
 # TODO: write this function (lab1, homework)
@@ -72,10 +54,7 @@ def labels_to_key(labels):
     :param labels:
     :return: label_key, dict {str: int}
     """
-    label_set = set(labels)
     label_key = {}
-    for i, label in enumerate(label_set):
-        label_key[label] = i
     return label_key
 
 # TODO: write this function (lab1, homework)
@@ -86,8 +65,6 @@ def labels_to_y(labels, label_key):
     :return: numpy vector y
     """
     y = np.zeros(len(labels), dtype=np.int)
-    for i,l in enumerate(labels):
-        y[i] = label_key[l]
     return y
 
 # TODO: write this function (lab1, homework)
@@ -97,9 +74,7 @@ def find_zero_rule_class(train_y):
     :param train_y: training labels
     :return: most_freq, the most frequent element in train_y
     """
-    class_counts = Counter(train_y)
-    print(class_counts)
-    most_freq = max(class_counts, key=lambda k: class_counts[k])
+    most_freq = None
     return most_freq
 
 # TODO: write this function (lab1, homework)
@@ -111,8 +86,6 @@ def apply_zero_rule(X, zero_class):
     :return: classifications: numpy array
     """
     classifications = np.zeros(len(y), dtype=np.int)
-    # assign every y the zero class
-    classifications[:] = zero_class
     return classifications
 
 # TODO: write this function (lab1, homework)
@@ -122,7 +95,5 @@ def calculate_accuracy(predicted, gold):
     :param gold: iterable, gold standard labels
     :return: accuracy: float in range [0,1]
     """
-    predicted = np.asarray(predicted)
-    gold = np.asarray(gold)
-    correct = (predicted == gold).sum()
-    return correct / gold.size
+    accuracy = 0.0
+    return accuracy

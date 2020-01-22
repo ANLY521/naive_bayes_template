@@ -7,15 +7,9 @@ from sklearn.naive_bayes import MultinomialNB, BernoulliNB
 
 # TODO create a function that loads all the essays into a matrix
 def load_features(list_of_essays, list_of_features):
-    total_essays = len(list_of_essays)
-    X = np.zeros((total_essays, len(list_of_features)), dtype=np.int)
-    # row is which essay
-    for i,essay in enumerate(list_of_essays):
-        review_word_counts = Counter(essay.lower().split())
-        # column is which word
-        for j,f_word in enumerate(list_of_features):
-            if f_word in review_word_counts:
-                X[i,j] = review_word_counts[f_word]
+
+    X = np.zeros((0, 0), dtype=np.int)
+
     return X
 
 
@@ -28,7 +22,7 @@ def main(data_file, vocab_path):
 
     function_words = load_function_words(vocab_path)
 
-    # TODO: load the attributed essays into a feature matrix
+    # load the attributed essays into a feature matrix
     X = load_features(essays, function_words)
     # TODO: load the author names into a vector y, mapped to 0 and 1, using functions from util.py
     labels_map = labels_to_key(authors)
@@ -37,31 +31,17 @@ def main(data_file, vocab_path):
     print(f"Numpy array has shape {X.shape} and dtype {X.dtype}")
 
     # TODO shuffle, then split the data
-    train, val = split_data(X, y, 0.25)
-    train_X,train_y = train
-    print((train_y==0).sum(), (train_y==1).sum(), train_y.shape[0])
-    val_X, val_y = val
-    print((val_y==0).sum(), (val_y==1).sum(), val_y.shape[0])
+
 
 
     # TODO: train a multinomial NB model, evaluate on validation split
-    mnb = MultinomialNB()
-    mnb.fit(train_X, train_y)
-    print("fit nb: counts")
-    print(mnb.score(val_X, val_y))
+
 
     # TODO: train a Bernoulli NB model, evaluate on validation split
-    bnb = BernoulliNB()
 
-    bnb.fit(train_X>0, train_y)
-    print("fit bnb: binary")
-    print(bnb.score(val_X>0, val_y))
 
     # TODO: fit the zero rule
-    most_common_class = np.argmax([(train_y==0).sum(), (train_y==1).sum()])
-    print(f"most common class: {most_common_class}")
 
-    print(f"baseline:{(val_y==most_common_class).sum()/val_y.size:.02}")
 
 
 
