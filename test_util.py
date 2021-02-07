@@ -22,7 +22,6 @@ def main(data_file):
 
     # shuffle and split the data. Function is already defined.
     train, test = split_data(essays, y, 0.3, shuffle=True)
-    train_
 
     print(f"{len(train[0])} in train; {len(test[0])} in test")
 
