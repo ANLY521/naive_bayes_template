@@ -19,34 +19,6 @@ def parse_federalist_papers(data_file):
     essay_ids = []
     return authors, texts, essay_ids
 
-# TODO: write this function (lab)
-def shuffle_dataset(data, id_strs):
-    """
-    Shuffles a list of datapoints and their id's in unison
-    :param data: iterable, each item a datapoint
-    :param id_strs: iterable, each item an id
-    :return: tuple (shuffled_data, shuffled_id_strs)
-    """
-    shuffled_data = []
-    shuffled_ids = []
-    return (shuffled_data, shuffled_ids)
-
-# TODO: write this function (lab1, homework)
-def split_data(X, file_ids, test_percent = 0.3, shuffle=True):
-    """
-    Splits dataset for supervised learning and evaluation
-    :param X: iterable of features
-    :param file_ids: iterable of file id's corresponding the features in X
-    :param test_percent: percent data to
-    :param shuffle:
-    :return: two tuples, (X_train, file_ids_train), (X_test, file_ids_test)
-    """
-    if shuffle:
-        X, file_ids = shuffle_dataset(X, file_ids)
-    train = []
-    test = []
-    return train, test
-
 # TODO: write this function (lab1, homework)
 def labels_to_key(labels):
     """
@@ -88,12 +60,42 @@ def apply_zero_rule(X, zero_class):
     classifications = np.zeros(len(y), dtype=np.int)
     return classifications
 
-# TODO: write this function (lab1, homework)
-def calculate_accuracy(predicted, gold):
+# data split and shuffle functions
+def shuffle_dataset(data0, data1):
     """
-    :param predicted: iterable, system output
-    :param gold: iterable, gold standard labels
-    :return: accuracy: float in range [0,1]
+    Shuffles two iterables containing associated data in unison, e.g. X and y; X and file id's
+    :param data0: iterable, e.g. X
+    :param data1: iterable, e.g. y
+    :return: tuple (shuffled0, shuffled1)
     """
-    accuracy = 0.0
-    return accuracy
+    # seed random for consistency in student homework
+    np.random.seed(521)
+    # define a new order for the indices of data0
+    new_order = np.random.permutation(len(data0))
+
+    # cast inputs to np array
+    data0 = np.asarray(data0)
+    data1 = np.asarray(data1)
+
+    # reorder
+    shuffled0 = data0[new_order]
+    shuffled1 = data1[new_order]
+    return (shuffled0, shuffled1)
+
+def split_data(data0, data1, test_percent = 0.3, shuffle=True):
+    """
+    Splits dataset for supervised learning and evaluation
+    :param data0: iterable, e.g. X, features
+    :param data1: iterable, e.g. y, labels corresponding to the features in X
+    :param test_percent: percent data to assign to test set
+    :param shuffle: shuffle data order before splitting
+    :return: two tuples, (data0_train, data1_train), (data0_test, data1_test)
+    """
+    if shuffle:
+        data0, data1 = shuffle_dataset(data0, data1)
+    data_size = len(data0)
+    num_test = int(test_percent * data_size)
+
+    train = (data0[:-num_test], data1[:-num_test])
+    test = (data0[-num_test:], data1[-num_test:])
+    return train, test
