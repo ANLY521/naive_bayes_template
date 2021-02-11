@@ -27,7 +27,8 @@ def main(data_file, vocab_path):
 
 
     # TODO 3: shuffle, then split the attributed data using util. Assign 75% train / 25% test
-    # (TODO 3-6 will be evaluated by checking object/function use in code and via writeup in README)
+    # (TODO 3-6 will be evaluated by checking object/function use in code and via writeup in README
+    # (..., I suggest using print statements to get info for the writeup)
 
 
     # TODO 4: train a multinomial NB model, evaluate on validation split

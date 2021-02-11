@@ -19,14 +19,14 @@ Zero-rule | (FILL ME)
 
 ## `federalist_dev.json` and `federalist_test.json`
 
-json files containing the text of federalist papers written by Madison, Hamilton, or disputed between the two authors.
+.json files containing the text of federalist papers written by Madison, Hamilton, or disputed between the two authors.
 The dev file is all labeled. It can be split and used for development (training and validation). 
 
 The test file contains only the disputed papers and no labels. It is not used in the labs and homework.
 
 ## Lab, week 1 : `util.py`
 
-Implements utility functions for supervised learning to be imported in `lab_nb.py` and `multinomial_nb.py`.
+Implements utility functions for supervised learning.
 You will not have to make changes to the script `test_util.py` that runs them to verify they work.
 
 The functions are 
@@ -66,5 +66,5 @@ Include which author is predicted by the zero rule baseline.
 
 _Naive Bayes is *deterministic*, meaning the model's probability estimates are always the same, given the same inputs. 
 There is a random seed in the shuffle and split function to ensure consistency, but if it was removed, you would likely
-see different results if you rerun your code.~
+see different results if you rerun your code._
 
