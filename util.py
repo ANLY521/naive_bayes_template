@@ -1,5 +1,4 @@
 import numpy as np
-from sklearn import utils
 from collections import Counter
 import json
 
