@@ -1,4 +1,4 @@
-from util import split_data, labels_to_key, parse_federalist_papers, labels_to_y, find_zero_rule_class, \
+from util import labels_to_key, parse_federalist_papers, labels_to_y, find_zero_rule_class, \
     apply_zero_rule
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
