@@ -1,16 +1,14 @@
 #!/usr/bin/env python
 import argparse
-from util import load_function_words, parse_federalist_papers, labels_to_key, labels_to_y, split_data
+from util import load_function_words, parse_federalist_papers, labels_to_key, labels_to_y
 import numpy as np
-from collections import Counter
-from sklearn.naive_bayes import MultinomialNB, BernoulliNB
 
 def load_features(list_of_essays, list_of_features):
     X = np.zeros((0, 0), dtype=np.int)
     return X
 
 
-def main(data_file, vocab_path):
+def main(data_file, vocab_path, random_seed):
     """Build and evaluate Naive Bayes classifiers for the federalist papers"""
 
     function_words = load_function_words(vocab_path)
@@ -27,6 +25,7 @@ def main(data_file, vocab_path):
 
 
     # TODO 3: shuffle, then split the attributed data using util. Assign 75% train / 25% test
+    # Use the train_test_split function in sklearn.model_selection and make sure to pass random_seed
     # (TODO 3-6 will be evaluated by checking object/function use in code and via writeup in README
     # (..., I suggest using print statements to get info for the writeup)
 
@@ -48,6 +47,8 @@ if __name__ == '__main__':
                         help='path to author dataset')
     parser.add_argument('--function_words_path', type=str, default="ewl_function_words.txt",
                         help='path to the list of words to use as features')
+    parser.add_argument('--seed', type=int, default=7,
+                        help='random seed for dataset split')
     args = parser.parse_args()
 
-    main(args.path, args.function_words_path)
+    main(args.path, args.function_words_path, args.seed)

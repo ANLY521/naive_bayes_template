@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn import utils
 from collections import Counter
 import json
 
@@ -75,43 +76,3 @@ def apply_zero_rule(X, zero_class):
     # assign every y the zero class
     classifications[:] = zero_class
     return classifications
-
-# data split and shuffle functions
-def shuffle_dataset(data0, data1):
-    """
-    Shuffles two iterables containing associated data in unison, e.g. X and y; X and file id's
-    :param data0: iterable, e.g. X
-    :param data1: iterable, e.g. y
-    :return: tuple (shuffled0, shuffled1)
-    """
-    # seed random for consistency in student homework
-    np.random.seed(521)
-    # define a new order for the indices of data0
-    new_order = np.random.permutation(len(data0))
-
-    # cast inputs to np array
-    data0 = np.asarray(data0)
-    data1 = np.asarray(data1)
-
-    # reorder
-    shuffled0 = data0[new_order]
-    shuffled1 = data1[new_order]
-    return (shuffled0, shuffled1)
-
-def split_data(data0, data1, test_percent = 0.3, shuffle=True):
-    """
-    Splits dataset for supervised learning and evaluation
-    :param data0: iterable, e.g. X, features
-    :param data1: iterable, e.g. y, labels corresponding to the features in X
-    :param test_percent: percent data to assign to test set
-    :param shuffle: shuffle data order before splitting
-    :return: two tuples, (data0_train, data1_train), (data0_test, data1_test)
-    """
-    if shuffle:
-        data0, data1 = shuffle_dataset(data0, data1)
-    data_size = len(data0)
-    num_test = int(test_percent * data_size)
-
-    train = (data0[:-num_test], data1[:-num_test])
-    test = (data0[-num_test:], data1[-num_test:])
-    return train, test
