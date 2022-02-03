@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import argparse
 from util import parse_federalist_papers
+from nltk import word_tokenize
 
 
 def word_probabilities(list_of_reviews, feature_list):
@@ -8,7 +9,7 @@ def word_probabilities(list_of_reviews, feature_list):
     returns a dict {feature_1: probability_1, ... feature_n: probability_n}"""
     all_review_tokens = []
     for review in list_of_reviews:
-        all_review_tokens.extend(review.strip().lower().split())
+        all_review_tokens.extend(word_tokenize(review.strip().lower()))
     author_counts = {}
     for feature in feature_list:
         count = len([t for t in all_review_tokens if t == feature])
@@ -20,7 +21,7 @@ def word_probabilities(list_of_reviews, feature_list):
 
 def estimate_nb(review, author_prob, feature_probs):
     """Calculates a naive bayes score for a string, given class estimate and feature estimates"""
-    tokenized_review = review.strip().lower().split()
+    tokenized_review = word_tokenize(review.strip().lower())
     p = author_prob
     for feature, prob in feature_probs.items():
         feature_count = len([w for w in tokenized_review if w == feature])
@@ -45,16 +46,18 @@ def main(data_file, features):
     training_essays = {author: essays[:-1] for author, essays in essay_dict.items()}
     heldout_essays = {author: essays[-1] for author, essays in essay_dict.items()}
 
+    total_train_essays = sum([len(essay_list) for essay_list in training_essays.values()])
+
     # TODO 2: estimate author probabilities. Creates a dict {author_1: probability_1, ...}
     author_probs = {}
-    for author in essay_dict:
-        author_probs[author] = len(essay_dict[author]) / total_essays
+    for author in training_essays:
+        author_probs[author] = len(training_essays[author]) / total_train_essays
     print(f"Author prior: {author_probs}")
 
     # TODO 3: estimate word probabilities per author. Define the function word_probabilities above
     author_word_probs = {}
-    for author in essay_dict:
-        word_probs = word_probabilities(essay_dict[author], features)
+    for author in training_essays:
+        word_probs = word_probabilities(training_essays[author], features)
         author_word_probs[author] = word_probs
     print(author_word_probs)
 

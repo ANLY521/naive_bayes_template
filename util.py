@@ -30,7 +30,7 @@ def parse_federalist_papers(data_file):
 def labels_to_key(labels):
     """
     Creates a mapping from string representations of labels to integers
-    :param labels:
+    :param labels: list of strings
     :return: label_key, dict {str: int}
     """
     label_set = set(labels)
